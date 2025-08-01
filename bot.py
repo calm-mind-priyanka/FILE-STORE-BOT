@@ -31,7 +31,7 @@ threading.Thread(target=run_health_server).start()
 # === Pyrogram Bot ===
 app = Client("filestore-bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
-# === Start Command (with File Retrieval) ===
+# === /start Command with File Retrieval ===
 @app.on_message(filters.command("start") & filters.private)
 async def start_handler(client, message: Message):
     user = message.from_user.first_name
@@ -62,32 +62,35 @@ async def start_handler(client, message: Message):
         ])
     )
 
-# === File Save Handler (With Forward Support) ===
+# === File Save Handler (Works with Forwarded Files Too) ===
 @app.on_message(filters.private & (filters.document | filters.video | filters.audio | filters.animation))
 async def save_file(client, message: Message):
-    # Re-send the file so bot owns it
-    try:
-        sent = await message.copy(chat_id=message.chat.id)
-    except Exception as e:
-        await message.reply("❌ Failed to process the file.")
+    media = message.document or message.video or message.audio or message.animation
+    if not media:
+        await message.reply("❌ Unsupported file type.")
         return
 
-    file = sent.document or sent.video or sent.audio or sent.animation
-    if file:
-        # Store info in MongoDB
-        file_info = {
-            "file_id": file.file_id,
-            "file_name": file.file_name,
-            "file_unique_id": file.file_unique_id,
-            "user_id": message.from_user.id
-        }
+    # Save to MongoDB
+    file_info = {
+        "file_id": media.file_id,
+        "file_name": media.file_name,
+        "file_unique_id": media.file_unique_id,
+        "user_id": message.from_user.id
+    }
+
+    # Avoid duplicate entries
+    if not collection.find_one({"file_unique_id": media.file_unique_id}):
         collection.insert_one(file_info)
 
-        bot_username = (await client.get_me()).username
-        share_link = f"https://t.me/{bot_username}?start={file.file_unique_id}"
-        await sent.reply(f"✅ File saved!\n\n🔗 **Shareable Link:**\n{share_link}")
+    bot_username = (await client.get_me()).username
+    share_link = f"https://t.me/{bot_username}?start={media.file_unique_id}"
+    
+    await message.reply(
+        f"✅ File saved successfully!\n\n"
+        f"🔗 **Shareable Link:**\n{share_link}"
+    )
 
-# === Callback Buttons ===
+# === Callback Button Handler ===
 @app.on_callback_query()
 async def cb_handler(client, callback_query):
     data = callback_query.data
@@ -95,15 +98,15 @@ async def cb_handler(client, callback_query):
         await callback_query.message.edit_text(
             "📁 **How to Use:**\n\n"
             "1. Send me any file (even forwarded).\n"
-            "2. I will re-upload and store it in my database.\n"
-            "3. You’ll get a permanent shareable link!\n\n"
+            "2. I will store it and give you a link.\n"
+            "3. You can share the link with anyone to retrieve the file.\n\n"
             "✅ Works with any file up to 2GB."
         )
     elif data == "about":
         await callback_query.message.edit_text(
             "🤖 **FileStore Bot**\n"
-            "Made with ❤️ using Pyrogram + MongoDB\n"
-            "🔐 Store and share files permanently.\n\n"
+            "Built using Pyrogram + MongoDB\n"
+            "🔐 Permanently stores your files with shareable links.\n\n"
             "👨‍💻 Developer: @YourUsername"
         )
 
