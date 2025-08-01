@@ -79,11 +79,10 @@ async def start_handler(client, message: Message):
                 "ɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇᴅ ᴀɴᴅ ᴘᴏᴡᴇʀꜰᴜʟ ꜰɪʟᴇ ꜱᴛᴏʀᴀɢᴇ ʙᴏᴛ. 📁\n\n"
                 "ꜱᴇɴᴅ ᴍᴇ ᴀɴʏ ꜰɪʟᴇ, ᴅᴏᴄᴜᴍᴇɴᴛ, ᴠɪᴅᴇᴏ, ᴀᴜᴅɪᴏ ᴏʀ ᴀɴɪᴍᴀᴛɪᴏɴ, "
                 "ᴀɴᴅ ɪ ᴡɪʟʟ ꜱᴛᴏʀᴇ ɪᴛ ɪɴ ᴍʏ ᴅᴀᴛᴀʙᴀꜱᴇ ᴄʜᴀɴɴᴇʟ ᴀɴᴅ ɢɪᴠᴇ ʏᴏᴜ ᴀ ᴘᴇʀᴍᴀɴᴇɴᴛ, "
-                "ꜱʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ 🔗 ᴛᴏ ᴀᴄᴄᴇꜱꜱ ᴛʜᴀᴛ ꜰɪʟᴇ ᴀɴʏᴛɪᴍᴇ!‼️\n\n"
-                "**Click HELP to get full details of all my features.**",
+                "ꜱʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ 🔗 ᴛᴏ ᴀᴄᴄᴇꜱꜱ ᴛʜᴀᴛ ꜰɪʟᴇ ᴀɴʏᴛɪᴍᴇ!‼️",
         reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton("📖 HELP", callback_data="help"),
-             InlineKeyboardButton("ℹ️ ABOUT", callback_data="about")],
+            [InlineKeyboardButton("📖 HELP", url="https://t.me/YourHelpBot")],
+            [InlineKeyboardButton("ℹ️ ABOUT", url="https://t.me/YourAboutBot")],
             [InlineKeyboardButton("🔔 UPDATE", url="https://t.me/YourChannel"),
              InlineKeyboardButton("👥 SUPPORT", url="https://t.me/YourSupport")],
             [InlineKeyboardButton("👨‍💻 DEVELOPER", url="https://t.me/YourUsername")]
@@ -128,25 +127,8 @@ async def save_file(client, message: Message):
         f"🔗 **Shareable Link:**\n{share_link}"
     )
 
-# === Callback Buttons ===
-@app.on_callback_query()
-async def cb_handler(client, callback_query):
-    data = callback_query.data
-    if data == "help":
-        await callback_query.message.edit_text(
-            "📁 **How to Use:**\n\n"
-            "1. Send me any file (even forwarded).\n"
-            "2. I will store it and give you a link.\n"
-            "3. You can share the link with anyone to retrieve the file.\n\n"
-            "✅ Works with any file up to 2GB."
-        )
-    elif data == "about":
-        await callback_query.message.edit_text(
-            "🤖 **FileStore Bot**\n"
-            "Built using Pyrogram + MongoDB\n"
-            "🔐 Permanently stores your files with shareable links.\n\n"
-            "👨‍💻 Developer: @YourUsername"
-        )
+# === Removed Callback Handler for help & about ===
+# If needed, you can define these inside `plugins/` as new plugin files.
 
 # === Run the Bot ===
 app.run()
