@@ -39,7 +39,7 @@ app = Client(
     api_id=API_ID,
     api_hash=API_HASH,
     bot_token=BOT_TOKEN,
-    plugins=dict(root="plugins")  # Keep this for plugins connection
+    plugins=dict(root="plugins")
 )
 
 # === /start Command ===
@@ -76,13 +76,11 @@ async def start_handler(client, message: Message):
     await message.reply_photo(
         photo="https://telegra.ph/file/9dd564e9e3de372861d9d.jpg",
         caption=f"ʜᴇʟʟᴏ {user},\n\n"
-                "ɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇᴅ ᴀɴᴅ ᴘᴏᴡᴇʀꜰᴜʟ ꜰɪʟᴇ ꜱᴛᴏʀᴀɢᴇ ʙᴏᴛ. 📁\n\n"
-                "ꜱᴇɴᴅ ᴍᴇ ᴀɴʏ ꜰɪʟᴇ, ᴅᴏᴄᴜᴍᴇɴᴛ, ᴠɪᴅᴇᴏ, ᴀᴜᴅɪᴏ ᴏʀ ᴀɴɪᴍᴀᴛɪᴏɴ, "
-                "ᴀɴᴅ ɪ ᴡɪʟʟ ꜱᴛᴏʀᴇ ɪᴛ ɪɴ ᴍʏ ᴅᴀᴛᴀʙᴀꜱᴇ ᴄʜᴀɴɴᴇʟ ᴀɴᴅ ɢɪᴠᴇ ʏᴏᴜ ᴀ ᴘᴇʀᴍᴀɴᴇɴᴛ, "
-                "ꜱʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ 🔗 ᴛᴏ ᴀᴄᴄᴇꜱꜱ ᴛʜᴀᴛ ꜰɪʟᴇ ᴀɴʏᴛɪᴍᴇ!‼️",
+                "ɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇᴅ ꜰɪʟᴇ ꜱᴛᴏʀᴀɢᴇ ʙᴏᴛ 📁\n\n"
+                "ꜱᴇɴᴅ ᴍᴇ ᴀɴʏ ꜰɪʟᴇ (ᴠɪᴅᴇᴏ, ᴅᴏᴄ, ᴀᴜᴅɪᴏ, ᴇᴛᴄ) ᴀɴᴅ ɪ ᴡɪʟʟ ꜱᴀᴠᴇ ɪᴛ ᴀɴᴅ ɢɪᴠᴇ ʏᴏᴜ ᴀ ꜱʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ 🔗",
         reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton("📖 HELP", url="https://t.me/YourHelpBot")],
-            [InlineKeyboardButton("ℹ️ ABOUT", url="https://t.me/YourAboutBot")],
+            [InlineKeyboardButton("📖 HELP", callback_data="help")],
+            [InlineKeyboardButton("ℹ️ ABOUT", callback_data="about")],
             [InlineKeyboardButton("🔔 UPDATE", url="https://t.me/YourChannel"),
              InlineKeyboardButton("👥 SUPPORT", url="https://t.me/YourSupport")],
             [InlineKeyboardButton("👨‍💻 DEVELOPER", url="https://t.me/YourUsername")]
@@ -127,8 +125,7 @@ async def save_file(client, message: Message):
         f"🔗 **Shareable Link:**\n{share_link}"
     )
 
-# === Removed Callback Handler for help & about ===
-# If needed, you can define these inside `plugins/` as new plugin files.
+# === Callbacks will be handled in plugins/help.py and plugins/about.py ===
 
 # === Run the Bot ===
 app.run()
