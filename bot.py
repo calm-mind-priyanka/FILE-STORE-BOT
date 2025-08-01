@@ -43,7 +43,7 @@ async def start_handler(client, message: Message):
         if file_data:
             try:
                 await message.reply_document(file_data["file_id"])
-            except Exception as e:
+            except Exception:
                 await message.reply("❌ Error sending file. Maybe it's too large or expired.")
         else:
             await message.reply("❌ File not found.")
@@ -62,11 +62,19 @@ async def start_handler(client, message: Message):
         ])
     )
 
-# === File Save Handler ===
+# === File Save Handler (With Forward Support) ===
 @app.on_message(filters.private & (filters.document | filters.video | filters.audio | filters.animation))
 async def save_file(client, message: Message):
-    file = message.document or message.video or message.audio or message.animation
+    # Re-send the file so bot owns it
+    try:
+        sent = await message.copy(chat_id=message.chat.id)
+    except Exception as e:
+        await message.reply("❌ Failed to process the file.")
+        return
+
+    file = sent.document or sent.video or sent.audio or sent.animation
     if file:
+        # Store info in MongoDB
         file_info = {
             "file_id": file.file_id,
             "file_name": file.file_name,
@@ -77,7 +85,7 @@ async def save_file(client, message: Message):
 
         bot_username = (await client.get_me()).username
         share_link = f"https://t.me/{bot_username}?start={file.file_unique_id}"
-        await message.reply(f"✅ File saved!\n\n🔗 **Shareable Link:**\n{share_link}")
+        await sent.reply(f"✅ File saved!\n\n🔗 **Shareable Link:**\n{share_link}")
 
 # === Callback Buttons ===
 @app.on_callback_query()
@@ -86,16 +94,16 @@ async def cb_handler(client, callback_query):
     if data == "help":
         await callback_query.message.edit_text(
             "📁 **How to Use:**\n\n"
-            "1. Send me any file.\n"
-            "2. I will store it in the database.\n"
-            "3. You will get a permanent link to access it anytime.\n\n"
-            "✅ You can share this link with anyone!"
+            "1. Send me any file (even forwarded).\n"
+            "2. I will re-upload and store it in my database.\n"
+            "3. You’ll get a permanent shareable link!\n\n"
+            "✅ Works with any file up to 2GB."
         )
     elif data == "about":
         await callback_query.message.edit_text(
             "🤖 **FileStore Bot**\n"
             "Made with ❤️ using Pyrogram + MongoDB\n"
-            "🔐 Store and share files up to 2GB.\n\n"
+            "🔐 Store and share files permanently.\n\n"
             "👨‍💻 Developer: @YourUsername"
         )
 
