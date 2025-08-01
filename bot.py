@@ -3,10 +3,10 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pymongo import MongoClient
 
 # === Hardcoded Bot Config ===
-API_ID = 123456
-API_HASH = "your_api_hash"
+API_ID = 24222039
+API_HASH = "6dd2dc70434b2f577f76a2e993135662"
 BOT_TOKEN = "your_bot_token"
-MONGO_DB_URI = "your_mongodb_uri"
+MONGO_DB_URI = "mongodb+srv://chatbot10:j@cluster0.9esnn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 DB_NAME = "filestore"
 
 # === MongoDB Setup ===
