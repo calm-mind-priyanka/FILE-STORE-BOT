@@ -45,8 +45,21 @@ async def start_handler(client, message: Message):
         file_unique_id = args[1]
         file_data = collection.find_one({"file_unique_id": file_unique_id})
         if file_data:
+            file_id = file_data["file_id"]
+            file_name = file_data.get("file_name", "File")
+            media_type = file_data.get("media_type", "document")
+
             try:
-                await message.reply_document(file_data["file_id"])
+                if media_type == "video":
+                    await message.reply_video(file_id, caption=file_name)
+                elif media_type == "audio":
+                    await message.reply_audio(file_id, caption=file_name)
+                elif media_type == "photo":
+                    await message.reply_photo(file_id, caption=file_name)
+                elif media_type == "animation":
+                    await message.reply_animation(file_id, caption=file_name)
+                else:
+                    await message.reply_document(file_id, caption=file_name)
             except Exception as e:
                 await message.reply(f"❌ Error sending file: {e}")
         else:
@@ -82,13 +95,15 @@ async def save_file(client, message: Message):
 
     file_unique_id = getattr(media, "file_unique_id", None)
     file_id = getattr(media, "file_id", None)
-    file_name = getattr(media, "file_name", "Photo")
+    file_name = getattr(media, "file_name", "File")
+    media_type = media.__class__.__name__.lower()
 
     # Save to MongoDB
     file_info = {
         "file_id": file_id,
         "file_name": file_name,
         "file_unique_id": file_unique_id,
+        "media_type": media_type,
         "user_id": message.from_user.id
     }
 
