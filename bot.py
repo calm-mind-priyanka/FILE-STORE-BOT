@@ -5,7 +5,7 @@ from pymongo import MongoClient
 # === Bot Config ===
 API_ID = 24222039
 API_HASH = "6dd2dc70434b2f577f76a2e993135662"
-BOT_TOKEN = "your_bot_token"  # Replace with actual token
+BOT_TOKEN = "7200848195:AAHRxuc-KM5RcpgC_7k7FMdBwUGX-vD0R3w"  # Replace with actual token
 MONGO_DB_URI = "mongodb+srv://chatbot10:j@cluster0.9esnn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 DB_NAME = "filestore"
 
