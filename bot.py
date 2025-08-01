@@ -125,7 +125,7 @@ async def save_file(client, message: Message):
         f"🔗 **Shareable Link:**\n{share_link}"
     )
 
-# === Callbacks will be handled in plugins/help.py and plugins/about.py ===
+# === Make Sure You Have help.py and about.py in plugins ===
 
 # === Run the Bot ===
 app.run()
