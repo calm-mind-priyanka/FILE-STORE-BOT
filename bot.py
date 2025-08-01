@@ -1,11 +1,13 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pymongo import MongoClient
+from flask import Flask
+import threading
 
 # === Bot Config ===
 API_ID = 24222039
 API_HASH = "6dd2dc70434b2f577f76a2e993135662"
-BOT_TOKEN = "8248598058:AAHz70ltZ5hAkGcc0zGo1vGKnrn2FbA_fe8"  # Replace with actual token
+BOT_TOKEN = "8248598058:AAHz70ltZ5hAkGcc0zGo1vGKnrn2FbA_fe8"
 MONGO_DB_URI = "mongodb+srv://chatbot10:j@cluster0.9esnn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 DB_NAME = "filestore"
 
@@ -13,6 +15,18 @@ DB_NAME = "filestore"
 mongo = MongoClient(MONGO_DB_URI)
 db = mongo[DB_NAME]
 collection = db["files"]
+
+# === Health Check Server ===
+health_app = Flask(__name__)
+
+@health_app.route('/')
+def health():
+    return 'Bot is running!', 200
+
+def run_health_server():
+    health_app.run(host='0.0.0.0', port=8080)
+
+threading.Thread(target=run_health_server).start()
 
 # === Pyrogram Bot ===
 app = Client("filestore-bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
@@ -23,7 +37,6 @@ async def start_handler(client, message: Message):
     user = message.from_user.first_name
     args = message.text.split(" ", 1)
 
-    # If user clicked shareable link with file id
     if len(args) > 1:
         file_unique_id = args[1]
         file_data = collection.find_one({"file_unique_id": file_unique_id})
@@ -33,7 +46,6 @@ async def start_handler(client, message: Message):
             await message.reply("❌ File not found.")
         return
 
-    # Normal /start command
     await message.reply(
         f"ʜᴇʟʟᴏ, {user} ℡ ️️ᯤ̸\n\n"
         "ɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇᴅ ᴀɴᴅ ᴘᴏᴡᴇʀꜰᴜʟ ꜰɪʟᴇ ꜱᴛᴏʀᴀɢᴇ ʙᴏᴛ. 📁\n\n"
