@@ -74,7 +74,7 @@ async def start_handler(client, message: Message):
         return
 
     await message.reply_photo(
-        photo="https://telegra.ph/file/9dd564e9e3de372861d9d.jpg",
+        photo="https://graph.org/file/5cf384404bf0f1e5cdd30-cb1c81c282651396d9.jpg",
         caption=f"ʜᴇʟʟᴏ {user},\n\n"
                 "ɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇᴅ ꜰɪʟᴇ ꜱᴛᴏʀᴀɢᴇ ʙᴏᴛ 📁\n\n"
                 "ꜱᴇɴᴅ ᴍᴇ ᴀɴʏ ꜰɪʟᴇ (ᴠɪᴅᴇᴏ, ᴅᴏᴄ, ᴀᴜᴅɪᴏ, ᴇᴛᴄ) ᴀɴᴅ ɪ ᴡɪʟʟ ꜱᴀᴠᴇ ɪᴛ ᴀɴᴅ ɢɪᴠᴇ ʏᴏᴜ ᴀ ꜱʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ 🔗",
