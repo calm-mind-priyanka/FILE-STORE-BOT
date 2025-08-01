@@ -8,13 +8,17 @@ import threading
 API_ID = 24222039
 API_HASH = "6dd2dc70434b2f577f76a2e993135662"
 BOT_TOKEN = "8248598058:AAHz70ltZ5hAkGcc0zGo1vGKnrn2FbA_fe8"
-MONGO_DB_URI = "mongodb+srv://chatbot10:j@cluster0.9esnn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+MONGO_DB_URI = "mongodb+srv://rpeditz:rpeditz@rpeditz.3vkebbh.mongodb.net/?retryWrites=true&w=majority&appName=rpeditz"
 DB_NAME = "filestore"
 
 # === MongoDB Setup ===
-mongo = MongoClient(MONGO_DB_URI)
-db = mongo[DB_NAME]
-collection = db["files"]
+try:
+    mongo = MongoClient(MONGO_DB_URI)
+    db = mongo[DB_NAME]
+    collection = db["files"]
+    print("✅ MongoDB connected.")
+except Exception as e:
+    print(f"❌ MongoDB connection error: {e}")
 
 # === Health Check Server ===
 health_app = Flask(__name__)
@@ -43,8 +47,8 @@ async def start_handler(client, message: Message):
         if file_data:
             try:
                 await message.reply_document(file_data["file_id"])
-            except Exception:
-                await message.reply("❌ Error sending file. Maybe it's too large or expired.")
+            except Exception as e:
+                await message.reply(f"❌ Error sending file: {e}")
         else:
             await message.reply("❌ File not found.")
         return
@@ -62,29 +66,39 @@ async def start_handler(client, message: Message):
         ])
     )
 
-# === File Save Handler (Works with Forwarded Files Too) ===
-@app.on_message(filters.private & (filters.document | filters.video | filters.audio | filters.animation))
+# === File Save Handler (Supports All Media) ===
+@app.on_message(filters.private & (filters.document | filters.video | filters.audio | filters.animation | filters.photo))
 async def save_file(client, message: Message):
-    media = message.document or message.video or message.audio or message.animation
+    media = (
+        message.document
+        or message.video
+        or message.audio
+        or message.animation
+        or message.photo
+    )
     if not media:
         await message.reply("❌ Unsupported file type.")
         return
 
+    file_unique_id = getattr(media, "file_unique_id", None)
+    file_id = getattr(media, "file_id", None)
+    file_name = getattr(media, "file_name", "Photo")
+
     # Save to MongoDB
     file_info = {
-        "file_id": media.file_id,
-        "file_name": media.file_name,
-        "file_unique_id": media.file_unique_id,
+        "file_id": file_id,
+        "file_name": file_name,
+        "file_unique_id": file_unique_id,
         "user_id": message.from_user.id
     }
 
-    # Avoid duplicate entries
-    if not collection.find_one({"file_unique_id": media.file_unique_id}):
+    # Avoid duplicates
+    if not collection.find_one({"file_unique_id": file_unique_id}):
         collection.insert_one(file_info)
 
     bot_username = (await client.get_me()).username
-    share_link = f"https://t.me/{bot_username}?start={media.file_unique_id}"
-    
+    share_link = f"https://t.me/{bot_username}?start={file_unique_id}"
+
     await message.reply(
         f"✅ File saved successfully!\n\n"
         f"🔗 **Shareable Link:**\n{share_link}"
