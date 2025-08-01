@@ -35,7 +35,7 @@ threading.Thread(target=run_health_server).start()
 # === Pyrogram Bot ===
 app = Client("filestore-bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
-# === /start Command with File Retrieval ===
+# === /start Command ===
 @app.on_message(filters.command("start") & filters.private)
 async def start_handler(client, message: Message):
     user = message.from_user.first_name
@@ -66,20 +66,25 @@ async def start_handler(client, message: Message):
             await message.reply("❌ File not found.")
         return
 
-    await message.reply(
-        f"Hello {user} 👋\n\n"
-        "I am a powerful File Store Bot.\n"
-        "📁 Send me any file and I will save it and give you a **permanent shareable link** 🔗\n\n"
-        "Just click HELP to know more.",
+    # Replace below file_id with your actual image's file ID
+    await message.reply_photo(
+        photo="https://telegra.ph/file/9dd564e9e3de372861d9d.jpg",  # Use a file ID or a direct image URL
+        caption=f"ʜᴇʟʟᴏ {user},\n\n"
+                "ɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇᴅ ᴀɴᴅ ᴘᴏᴡᴇʀꜰᴜʟ ꜰɪʟᴇ ꜱᴛᴏʀᴀɢᴇ ʙᴏᴛ. 📁\n\n"
+                "ꜱᴇɴᴅ ᴍᴇ ᴀɴʏ ꜰɪʟᴇ, ᴅᴏᴄᴜᴍᴇɴᴛ, ᴠɪᴅᴇᴏ, ᴀᴜᴅɪᴏ ᴏʀ ᴀɴɪᴍᴀᴛɪᴏɴ, "
+                "ᴀɴᴅ ɪ ᴡɪʟʟ ꜱᴛᴏʀᴇ ɪᴛ ɪɴ ᴍʏ ᴅᴀᴛᴀʙᴀꜱᴇ ᴄʜᴀɴɴᴇʟ ᴀɴᴅ ɢɪᴠᴇ ʏᴏᴜ ᴀ ᴘᴇʀᴍᴀɴᴇɴᴛ, "
+                "ꜱʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ 🔗 ᴛᴏ ᴀᴄᴄᴇꜱꜱ ᴛʜᴀᴛ ꜰɪʟᴇ ᴀɴʏᴛɪᴍᴇ!‼️\n\n"
+                "**Click HELP to get full details of all my features.**",
         reply_markup=InlineKeyboardMarkup([
             [InlineKeyboardButton("📖 HELP", callback_data="help"),
              InlineKeyboardButton("ℹ️ ABOUT", callback_data="about")],
-            [InlineKeyboardButton("🔔 UPDATES", url="https://t.me/YourChannel")],
-            [InlineKeyboardButton("👥 SUPPORT", url="https://t.me/YourSupport")]
+            [InlineKeyboardButton("🔔 UPDATE", url="https://t.me/YourChannel"),
+             InlineKeyboardButton("👥 SUPPORT", url="https://t.me/YourSupport")],
+            [InlineKeyboardButton("👨‍💻 DEVELOPER", url="https://t.me/YourUsername")]
         ])
     )
 
-# === File Save Handler (Supports All Media) ===
+# === Save All Media ===
 @app.on_message(filters.private & (filters.document | filters.video | filters.audio | filters.animation | filters.photo))
 async def save_file(client, message: Message):
     media = (
@@ -119,7 +124,7 @@ async def save_file(client, message: Message):
         f"🔗 **Shareable Link:**\n{share_link}"
     )
 
-# === Callback Button Handler ===
+# === Callback Buttons ===
 @app.on_callback_query()
 async def cb_handler(client, callback_query):
     data = callback_query.data
