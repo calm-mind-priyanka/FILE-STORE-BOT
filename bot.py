@@ -3,6 +3,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pymongo import MongoClient
 from flask import Flask
 import threading
+import os
 
 # === Bot Config ===
 API_ID = 24222039
@@ -33,7 +34,13 @@ def run_health_server():
 threading.Thread(target=run_health_server).start()
 
 # === Pyrogram Bot ===
-app = Client("filestore-bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+app = Client(
+    "filestore-bot",
+    api_id=API_ID,
+    api_hash=API_HASH,
+    bot_token=BOT_TOKEN,
+    plugins=dict(root="plugins")  # This allows connection with the plugins/ folder
+)
 
 # === /start Command ===
 @app.on_message(filters.command("start") & filters.private)
@@ -66,9 +73,8 @@ async def start_handler(client, message: Message):
             await message.reply("❌ File not found.")
         return
 
-    # Replace below file_id with your actual image's file ID
     await message.reply_photo(
-        photo="https://telegra.ph/file/9dd564e9e3de372861d9d.jpg",  # Use a file ID or a direct image URL
+        photo="https://telegra.ph/file/9dd564e9e3de372861d9d.jpg",
         caption=f"ʜᴇʟʟᴏ {user},\n\n"
                 "ɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇᴅ ᴀɴᴅ ᴘᴏᴡᴇʀꜰᴜʟ ꜰɪʟᴇ ꜱᴛᴏʀᴀɢᴇ ʙᴏᴛ. 📁\n\n"
                 "ꜱᴇɴᴅ ᴍᴇ ᴀɴʏ ꜰɪʟᴇ, ᴅᴏᴄᴜᴍᴇɴᴛ, ᴠɪᴅᴇᴏ, ᴀᴜᴅɪᴏ ᴏʀ ᴀɴɪᴍᴀᴛɪᴏɴ, "
@@ -103,7 +109,6 @@ async def save_file(client, message: Message):
     file_name = getattr(media, "file_name", "File")
     media_type = media.__class__.__name__.lower()
 
-    # Save to MongoDB
     file_info = {
         "file_id": file_id,
         "file_name": file_name,
@@ -112,7 +117,6 @@ async def save_file(client, message: Message):
         "user_id": message.from_user.id
     }
 
-    # Avoid duplicates
     if not collection.find_one({"file_unique_id": file_unique_id}):
         collection.insert_one(file_info)
 
