@@ -8,7 +8,7 @@ import os
 # === Bot Config ===
 API_ID = 24222039
 API_HASH = "6dd2dc70434b2f577f76a2e993135662"
-BOT_TOKEN = "8248598058:AAHz70ltZ5hAkGcc0zGo1vGKnrn2FbA_fe8"
+BOT_TOKEN = "8248598058:AAGu4Y2S1mJeUetgi6ipo-kd8Qekeqgl2Wk"
 MONGO_DB_URI = "mongodb+srv://rpeditz:rpeditz@rpeditz.3vkebbh.mongodb.net/?retryWrites=true&w=majority&appName=rpeditz"
 DB_NAME = "filestore"
 
