@@ -52,7 +52,7 @@ async def back_to_start(client, callback_query: CallbackQuery):
     user = callback_query.from_user.first_name
     await callback_query.message.edit_media(
         media=InputMediaPhoto(
-            media="https://te.legra.ph/file/2d74c0aa6a2bb2174b128.jpg",  # Replace with your actual image link
+            media="https://graph.org/file/5cf384404bf0f1e5cdd30-cb1c81c282651396d9.jpg",  # Replace with your actual image link
             caption=(
                 f"ʜᴇʟʟᴏ {user},\n\n"
                 "̸ɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇᴅ ᴀɴᴅ ᴘᴏᴡᴇʀꜰᴜʟ ꜰɪʟᴇ ꜱᴛᴏʀᴀɢᴇ ʙᴏᴛ. 📁\n"
